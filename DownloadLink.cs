@@ -7,6 +7,8 @@ namespace CivitAI_Grabber
     {
         /// <summary>The CivitAI URL to download data from.</summary>
         public string Url { get; set; } = "";
+        /// <summary>The model version Id number if one exists.</summary>
+        public int ModelVersionId { get; set; } = -1;
         /// <summary>Should the URL be skipped from being downloaded?</summary>
         public bool ShouldSkip { get; set; } = false;
         /// <summary>The folder hierarchy to store the downloaded data into.</summary>
@@ -36,10 +38,29 @@ namespace CivitAI_Grabber
                 link.Directories.Add (tokens[i]);
             }
 
-            //TODO: Validate link.
-            // Add final token as it should be the download link.
+            // Validate link.
+            if (tokens[^1].Contains ("https://civitai.com/") == false)
+                return false;
+
+            // Add final token as the url and parse any id if available.
             link.Url = tokens[^1];
+            link.ModelVersionId = ExtractModelVersionId (link.Url);
             return true;
+        }
+
+        private static int ExtractModelVersionId (string url)
+        {
+            // Look for model version specifier in url.
+            if (url.Contains ("modelVersionId="))
+            {
+                string[] tokens = url.Split ("=");
+
+                if (int.TryParse (tokens[^1], out int result))
+                    return result;
+            }
+
+            // If parsing failed or not found, return skip id.
+            return -1;
         }
 
         /// <summary>Constructs a directory path from the links stored directories and the given root and subfolder if one is provided.</summary>
