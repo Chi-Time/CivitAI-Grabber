@@ -25,7 +25,7 @@ namespace CivitAI_Grabber
         /// <summary>Serialise the current <see cref="Config"/> instance to a json string.</summary>
         /// <param name="prettyPrint">Should the json string be formatted and readable?</param>
         /// <returns>A json string of the current <see cref="Config"/> instance.</returns>
-        public string Serialise (bool prettyPrint)
+        public string Serialise (bool prettyPrint = true)
         {
             return JsonSerializer.Serialize (this, new JsonSerializerOptions ()
             {

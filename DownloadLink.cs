@@ -1,5 +1,4 @@
-﻿using NLog.Config;
-using System.Text;
+﻿using System.Text;
 
 namespace CivitAI_Grabber
 {
