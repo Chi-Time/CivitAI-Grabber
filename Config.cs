@@ -22,6 +22,18 @@ namespace CivitAI_Grabber
 
         private static readonly NLog.Logger _Logger = NLog.LogManager.GetCurrentClassLogger ();
 
+        /// <summary>Determines if config directories are valid paths.</summary>
+        /// <returns><see langword="true"/> if all directories are valid. <see langword="false"/> if not.</returns>
+        public bool IsValid ()
+        {
+            return Directory.Exists (CheckpointDirectory)
+                && Directory.Exists (TextualInversionDirectory)
+                && Directory.Exists (HypernetworkDirectory)
+                && Directory.Exists (LoraDirectory)
+                && Directory.Exists (LoConDirectory)
+                && Directory.Exists (OtherDirectory);
+        }
+
         /// <summary>Serialise the current <see cref="Config"/> instance to a json string.</summary>
         /// <param name="prettyPrint">Should the json string be formatted and readable?</param>
         /// <returns>A json string of the current <see cref="Config"/> instance.</returns>
