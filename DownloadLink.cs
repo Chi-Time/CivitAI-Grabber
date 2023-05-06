@@ -14,6 +14,32 @@ namespace CivitAI_Grabber
         /// <summary>The folder hierarchy to store the downloaded data into.</summary>
         public List<string> Directories { get; set; } = new List<string>();
 
+        private static readonly NLog.Logger _Logger = NLog.LogManager.GetCurrentClassLogger ();
+
+        /// <summary>Parses and loads the download links from the provided file.</summary>
+        /// <param name="filePath">The file path to read from.</param>
+        /// <returns>A list of parsed download links.</returns>
+        public static List<DownloadLink> LoadLinks (string filePath)
+        {
+            if (File.Exists (filePath) == false)
+            {
+                _Logger.Error ($"Could not find links.txt at expected location: {filePath}\nPlease ensure a links.txt file exists with links provided to download.");
+                Program.Terminate ();
+            }
+
+            var links = new List<DownloadLink> ();
+            using (var sr = new StreamReader (filePath))
+            {
+                string? line = "";
+
+                while (( line = sr.ReadLine () ) != null)
+                    if (DownloadLink.TryParse (line, out DownloadLink link))
+                        links.Add (link);
+            }
+
+            return links;
+        }
+
         /// <summary>Try and parse the given line as a <see cref="DownloadLink"/> instance.</summary>
         /// <param name="line">The line to parse.</param>
         /// <param name="link">The <see cref="DownloadLink"/> instance to fill.</param>

@@ -4,9 +4,26 @@ namespace CivitAI_Grabber
 {
     internal class Program
     {
+        private static readonly NLog.Logger _Logger = NLog.LogManager.GetCurrentClassLogger ();
+
         static void Main (string[] args)
         {
             InitialiseNlog ();
+            var config = Config.Load (@"config.json");
+            if (config.IsValid () == false)
+            {
+                _Logger.Error ("Invalid config directories set.\nPlease ensure valid directories are assigned before using this application.");
+                Terminate ();
+            }
+
+            var links = DownloadLink.LoadLinks (@"links.txt");
+            if (links.Count <= 0)
+            {
+                _Logger.Error ("No valid download links provided.\nPlease provide valid links to download from before using this application.");
+                Terminate ();
+            }
+
+            Console.ReadKey ();
         }
 
         private static void InitialiseNlog ()
@@ -28,6 +45,13 @@ namespace CivitAI_Grabber
             config.AddRule (NLog.LogLevel.Debug, NLog.LogLevel.Fatal, logConsole);
             config.AddRule (NLog.LogLevel.Debug, NLog.LogLevel.Fatal, logFile);
             NLog.LogManager.Configuration = config;
+        }
+
+        public static void Terminate ()
+        {
+            Console.WriteLine ("\nExecution stopped consult the logfile for more info.\nPress any key to close.");
+            Console.ReadKey ();
+            Environment.Exit (0);
         }
     }
 }
