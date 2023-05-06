@@ -24,14 +24,14 @@ namespace CivitAI_Grabber.Models
         public ModelVersion? GetModelVersion (int versionID = -1)
         {
             if (versionID == -1)
-                return GetMostRecentModelVersion ();
+                return GetMostRecent ();
 
             return ModelVersions.Find (x => x.Id == versionID);
         }
 
         /// <summary>Retrieves the most recently added model version.</summary>
         /// <returns>The most recent <see cref="ModelVersion"/> instance if one exists. <see langword="null"/> if none found.</returns>
-        public ModelVersion? GetMostRecentModelVersion ()
+        public ModelVersion? GetMostRecent ()
         {
             if (ModelVersions.Count <= 0)
                 return null;
