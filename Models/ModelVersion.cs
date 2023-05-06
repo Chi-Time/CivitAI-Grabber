@@ -14,5 +14,38 @@
         public string[] TrainedWords { get; set; } = new string[0];
         public List<ModelFile> Files { get; set; } = new ();
         public List<Image> Images { get; set; } = new ();
+
+        /// <summary>Retrieve the first <see cref="ModelFile"/> instance matching a tensor model.</summary>
+        /// <returns>The first found <see cref="ModelFile"/> instance.</returns>
+        public ModelFile? GetModelFile ()
+        {
+            return GetModelFile (new string[] { "safetensor", "pickletensor" });
+        }
+
+        /// <summary>Retrieve the first <see cref="ModelFile"/> instance matching the formats provided if available.</summary>
+        /// <param name="formats">The format types to match with.</param>
+        /// <returns>The first found <see cref="ModelFile"/> instance.</returns>
+        public ModelFile? GetModelFile (string[] formats)
+        {
+            if (Files.Count <= 0)
+                return null;
+
+            if (Files.Count == 1)
+                return Files[0];
+            
+            // If more than one file exists then loop through them to find the first instance
+            // of a valid format that we want.
+            for (int i = 0; i < Files.Count; i++)
+            {
+                ModelFile current = Files[i];
+                for (int j = 0; j < formats.Length; j++)
+                {
+                    if (current.Metadata.Format == formats[j])
+                        return current;
+                }
+            }
+
+            return null;
+        }
     }
 }

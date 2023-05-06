@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace CivitAI_Grabber
 {
+    /// <summary>Utilities for performing web requests and formatting with the CivitAI API.</summary>
     public static class WebUtility
     {
         private static readonly HttpClient _Client = new HttpClient ();

@@ -7,7 +7,7 @@
         public int Id { get; set; } = -1;
         public double SizeKB { get; set; } = 0.0d;
         public string Type { get; set; } = "";
-        public ModelFileMetadata? Metadata { get; set; }
+        public ModelFileMetadata Metadata { get; set; } = new ();
         public Hashes Hashes { get; set; } = new ();
         public string DownloadUrl { get; set; } = "";
         public bool Primary { get; set; } = false;
