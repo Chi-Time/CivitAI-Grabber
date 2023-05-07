@@ -33,6 +33,7 @@
             if (Files.Count == 1)
                 return Files[0];
             
+            //TODO: Offer option to download either fp32 or fp16 through parameter.
             // If more than one file exists then loop through them to find the first instance
             // of a valid format that we want.
             for (int i = 0; i < Files.Count; i++)
