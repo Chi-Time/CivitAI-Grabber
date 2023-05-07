@@ -41,7 +41,7 @@
                 ModelFile current = Files[i];
                 for (int j = 0; j < formats.Length; j++)
                 {
-                    if (current.Metadata.Format == formats[j])
+                    if (current.Metadata.Format.ToLower () == formats[j].ToLower ())
                         return current;
                 }
             }
