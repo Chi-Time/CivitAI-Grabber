@@ -29,9 +29,18 @@ namespace CivitAI_Grabber
                 return DownloadResult.Failed;
 
             ModelVersion? version = model.GetModelVersion (downloadLink.ModelVersionId)!;
-            ModelFile? file = version.GetModelFile ();
-            if (version == null || file == null)
+            if (version == null)
+            {
+                _Logger.Warn ("No model version found for model: " + downloadLink.Url);
                 return DownloadResult.Failed;
+            }
+
+            ModelFile? file = version.GetModelFile ();
+            if (file == null)
+            {
+                _Logger.Warn ("No model file found for model: " + downloadLink.Url);
+                return DownloadResult.Failed;
+            }
 
             // Determine if file is already downloaded into path.
             if (File.Exists (downloadDirectory + file.Name))
