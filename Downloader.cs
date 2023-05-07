@@ -135,7 +135,11 @@ namespace CivitAI_Grabber
             infoBuilder.AppendLine (model.Serialise ());
             infoBuilder.AppendLine ($"----------------------------");
 
-            string filePath = downloadDirectory + model.Name + "-info.txt";
+            var modelFile = modelVersion.GetModelFile ();
+            if (modelFile == null)
+                modelFile = new ModelFile ();
+
+            string filePath = downloadDirectory + modelFile.Name + "-info.txt";
             using (FileStream fs = File.Create (filePath))
             {
                 byte[] infoBytes = new UTF8Encoding (true).GetBytes (infoBuilder.ToString ());
