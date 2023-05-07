@@ -1,10 +1,12 @@
 ﻿using CivitAI_Grabber.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace CivitAI_Grabber
 {
@@ -50,6 +52,7 @@ namespace CivitAI_Grabber
             if (result == false)
                 return DownloadResult.Failed;
 
+            DownloadPreviews (version, downloadDirectory);
             return DownloadResult.Success;
         }
 
@@ -71,6 +74,41 @@ namespace CivitAI_Grabber
             }
 
             return true;
+        }
+
+        private static void DownloadPreviews (ModelVersion modelVersion, string downloadDirectory)
+        {
+            var modelFile = modelVersion.GetModelFile ();
+            if (modelFile == null)
+                return;
+
+            StringBuilder failMessage = new ();
+            for (int i = 0; i < modelVersion.Images.Count; i++)
+            {
+                var currentImage = modelVersion.Images[i];
+
+                if (string.IsNullOrWhiteSpace (currentImage.Url))
+                    continue;
+
+                string extension = Path.GetExtension (currentImage.Url);
+                string filePath = downloadDirectory + Path.GetFileNameWithoutExtension (modelFile.Name);
+
+                // Format first found preview for Auto1111 previews.
+                if (i == 0)
+                    filePath += ".preview" + extension;
+                else
+                    filePath += "_" + i.ToString ("D2") + extension;
+
+                if (File.Exists (filePath))
+                    continue;
+
+                bool result = WebUtility.DownloadFile (currentImage.Url, filePath);
+                if (result == false)
+                    failMessage.AppendLine ($"\tUnable to download preview image {currentImage.Url} from model file {modelVersion.Name}.");
+            }
+
+            if (failMessage.Length > 0)
+                _Logger.Warn (failMessage.ToString ());
         }
     }
 }
