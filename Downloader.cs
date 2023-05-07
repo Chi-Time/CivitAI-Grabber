@@ -1,12 +1,5 @@
 ﻿using CivitAI_Grabber.Models;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 
 namespace CivitAI_Grabber
 {
@@ -53,6 +46,7 @@ namespace CivitAI_Grabber
                 return DownloadResult.Failed;
 
             DownloadPreviews (version, downloadDirectory);
+            WriteInfoFile (model, downloadLink, downloadDirectory);
             return DownloadResult.Success;
         }
 
@@ -76,6 +70,7 @@ namespace CivitAI_Grabber
             return true;
         }
 
+        // Download image previews associated with the given model version.
         private static void DownloadPreviews (ModelVersion modelVersion, string downloadDirectory)
         {
             var modelFile = modelVersion.GetModelFile ();
@@ -109,6 +104,43 @@ namespace CivitAI_Grabber
 
             if (failMessage.Length > 0)
                 _Logger.Warn (failMessage.ToString ());
+        }
+
+        // Write the info file about the download to the directory given.
+        public static void WriteInfoFile (Model model, DownloadLink downloadLink, string downloadDirectory)
+        {
+            var modelVersion = model.GetModelVersion ();
+            if (modelVersion == null)
+                modelVersion = new ModelVersion ();
+
+            var infoBuilder = new StringBuilder ();
+            infoBuilder.AppendLine ($"Model Url: {downloadLink.Url}");
+            infoBuilder.AppendLine ($"Base Model: {modelVersion.BaseModel}");
+            infoBuilder.AppendLine ($"Keywords: {string.Join (", ", modelVersion.TrainedWords)}");
+            infoBuilder.AppendLine ($"--------DESCRIPTION---------");
+            infoBuilder.AppendLine ();
+            infoBuilder.AppendLine (WebUtility.RemoveHTML (model.Description));
+            infoBuilder.AppendLine ($"----------------------------");
+            infoBuilder.AppendLine ();
+            infoBuilder.AppendLine ($"-----ABOUT THIS VERSION-----");
+            infoBuilder.AppendLine (WebUtility.RemoveHTML (modelVersion.Description));
+            infoBuilder.AppendLine ($"----------------------------");
+            infoBuilder.AppendLine ();
+            infoBuilder.AppendLine ($"------PREVIEWS METADATA-----");
+            foreach (var image in modelVersion.Images)
+                infoBuilder.AppendLine (image.Meta.ToString ());
+            infoBuilder.AppendLine ($"----------------------------");
+            infoBuilder.AppendLine ();
+            infoBuilder.AppendLine ($"------ENTIRE LINK JSON------");
+            infoBuilder.AppendLine (model.Serialise ());
+            infoBuilder.AppendLine ($"----------------------------");
+
+            string filePath = downloadDirectory + model.Name + "-info.txt";
+            using (FileStream fs = File.Create (filePath))
+            {
+                byte[] infoBytes = new UTF8Encoding (true).GetBytes (infoBuilder.ToString ());
+                fs.Write (infoBytes, 0, infoBytes.Length);
+            }
         }
     }
 }
