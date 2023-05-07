@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System.IO;
+using System.Net;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
@@ -10,6 +12,32 @@ namespace CivitAI_Grabber
     {
         private static readonly HttpClient _Client = new HttpClient ();
         private static readonly NLog.Logger _Logger = NLog.LogManager.GetCurrentClassLogger ();
+
+        /// <summary>Download a file from the given url to the filePath provided.</summary>
+        /// <param name="url">The url to download data from.</param>
+        /// <param name="filePath">The filepath to save the downloaded data to.</param>
+        /// <returns><see langword="true"/> if download operation successful. <see langword="false"/> if failed.</returns>
+        public static bool DownloadFile (string url, string filePath)
+        {
+            Console.WriteLine (url);
+
+            //TODO: Switch to async and perform progress logging for user feedback.
+            try
+            {
+                using HttpResponseMessage response = GetRedirectResponse (new Uri (url));
+                using Stream stream = response.Content.ReadAsStream ();
+                using FileStream fs = new (filePath, FileMode.OpenOrCreate);
+                stream.Seek (0, SeekOrigin.Begin);
+                stream.CopyTo (fs);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                _Logger.Error (e, $"Failed to download file: {filePath} from url: {url}");
+                return false;
+            }
+        }
 
         /// <summary>GET a string response from the provided url asynchronously.</summary>
         /// <param name="url">The url to GET request a response from.</param>
