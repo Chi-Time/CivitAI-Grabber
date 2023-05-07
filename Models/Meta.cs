@@ -20,7 +20,7 @@ namespace CivitAI_Grabber.Models
         // Allow reading from string as number values are a string value for some weird reason.
         [JsonPropertyName ("Clip skip")]
         [JsonNumberHandling (JsonNumberHandling.AllowReadingFromString)]
-        public int ClipSkip { get; set; }
+        public int ClipSkip { get; set; } = 0;
         [JsonPropertyName ("Model hash")]
         public string ModelHash { get; set; } = "";
         [JsonPropertyName ("Hires steps")]
@@ -34,7 +34,7 @@ namespace CivitAI_Grabber.Models
         public string NegativePrompt { get; set; } = "";
         [JsonPropertyName ("Denoising strength")]
         [JsonNumberHandling (JsonNumberHandling.AllowReadingFromString)]
-        public float DenoisingStrength { get; set; }
+        public float DenoisingStrength { get; set; } = 0.0f
 
         public override string ToString ()
         {

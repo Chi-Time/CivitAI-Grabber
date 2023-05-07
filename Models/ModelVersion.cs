@@ -6,8 +6,8 @@
         public int Id { get; set; } = -1;
         public int ModelId { get; set; } = -1;
         public string Name { get; set; } = "";
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.MinValue;
+        public DateTime UpdatedAt { get; set; } = DateTime.MinValue;
         public string BaseModel { get; set; } = "";
         public string Description { get; set; } = "";
         public string DownloadUrl { get; set; } = "";

@@ -7,6 +7,6 @@
         public string NSFW { get; set; } = "";
         public uint Width { get; set; } = 0;  
         public uint Height { get; set; } = 0;
-        public Meta? Meta { get; set; }
+        public Meta Meta { get; set; } = new Meta ();
     }
 }
