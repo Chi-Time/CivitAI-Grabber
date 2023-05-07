@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using CivitAI_Grabber.Converters;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace CivitAI_Grabber.Models
@@ -17,6 +18,55 @@ namespace CivitAI_Grabber.Models
         public List<ModelVersion> ModelVersions { get; set; } = new ();
 
         private static readonly NLog.Logger _Logger = NLog.LogManager.GetCurrentClassLogger ();
+
+        /// <summary>Serialise the current <see cref="Model"/> instance to a json string.</summary>
+        /// <param name="prettyPrint">Should the json string be formatted and readable?</param>
+        /// <returns>A json string of the current <see cref="Model"/> instance.</returns>
+        public string Serialise (bool prettyPrint = true)
+        {
+            try
+            {
+                var options = new JsonSerializerOptions ()
+                {
+                    WriteIndented = prettyPrint,
+                    NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals
+                };
+
+                options.Converters.Add (new NullToEmptyStringConverter ());
+                return JsonSerializer.Serialize (this, options);
+            }
+            catch (Exception e)
+            {
+                _Logger.Error (e, "Unable to serialise model file.");
+                return "";
+            }
+        }
+
+        /// <summary>Deserialise the given json string to a <see cref="Model"/> instance.</summary>
+        /// <param name="json">The json string to deserialise from.</param>
+        /// <returns>A <see cref="Model"/> instance if successful. <see langword="null"/> if failed.</returns>
+        public static Model? Deserialise (string json)
+        {
+            try
+            {
+                var options = new JsonSerializerOptions ()
+                {
+                    AllowTrailingCommas = true,
+                    PropertyNameCaseInsensitive = true,
+                    UnknownTypeHandling = JsonUnknownTypeHandling.JsonNode,
+                };
+
+                //TODO: Switch back to Newtonsoft eventually as we can't populate null fields automatically. Awesome
+                //https://stackoverflow.com/questions/72661011/system-text-json-defaultvaluehandling-defaultvaluehandling-ignore-alternativ
+                options.Converters.Add (new NullToEmptyStringConverter ());
+                return JsonSerializer.Deserialize<Model> (json, options);
+            }
+            catch (Exception e)
+            {
+                _Logger.Warn (e, "Could not deserialise model from provided json.");
+                return null;
+            }
+        }
 
         /// <summary>Retrieves the model version matching the id if one exists.</summary>
         /// <param name="versionID">The id of the model version to find.</param>
@@ -41,27 +91,6 @@ namespace CivitAI_Grabber.Models
 
             var recentVersions = ModelVersions.OrderByDescending (x => x.CreatedAt).ToList ();
             return recentVersions[0];
-        }
-
-        /// <summary>Deserialise the given json string to a <see cref="Model"/> instance.</summary>
-        /// <param name="json">The json string to deserialise from.</param>
-        /// <returns>A <see cref="Model"/> instance if successful. <see langword="null"/> if failed.</returns>
-        public static Model? Deserialise (string json)
-        {
-            try
-            {
-                return JsonSerializer.Deserialize<Model> (json, new JsonSerializerOptions ()
-                {
-                    AllowTrailingCommas = true,
-                    PropertyNameCaseInsensitive = true,
-                    UnknownTypeHandling = JsonUnknownTypeHandling.JsonNode,
-                });
-            }
-            catch (Exception e)
-            {
-                _Logger.Warn (e, "Could not deserialise model from provided json.");
-                return null;
-            }
         }
     }
 }

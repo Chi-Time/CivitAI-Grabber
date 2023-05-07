@@ -34,7 +34,7 @@ namespace CivitAI_Grabber.Models
         public string NegativePrompt { get; set; } = "";
         [JsonPropertyName ("Denoising strength")]
         [JsonNumberHandling (JsonNumberHandling.AllowReadingFromString)]
-        public float DenoisingStrength { get; set; } = 0.0f
+        public float DenoisingStrength { get; set; } = 0.0f;
 
         public override string ToString ()
         {
