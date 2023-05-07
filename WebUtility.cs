@@ -19,8 +19,6 @@ namespace CivitAI_Grabber
         /// <returns><see langword="true"/> if download operation successful. <see langword="false"/> if failed.</returns>
         public static bool DownloadFile (string url, string filePath)
         {
-            Console.WriteLine (url);
-
             //TODO: Switch to async and perform progress logging for user feedback.
             try
             {
