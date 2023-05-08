@@ -113,7 +113,7 @@ namespace CivitAI_Grabber
         // Write the info file about the download to the directory given.
         public static void WriteInfoFile (Model model, DownloadLink downloadLink, string downloadDirectory)
         {
-            var modelVersion = model.GetModelVersion ();
+            var modelVersion = model.GetModelVersion (downloadLink.ModelVersionId);
             if (modelVersion == null)
                 modelVersion = new ModelVersion ();
 
