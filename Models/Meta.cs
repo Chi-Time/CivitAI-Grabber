@@ -10,8 +10,7 @@ namespace CivitAI_Grabber.Models
     /// <summary>Generation parameters of the models image.</summary>
     public class Meta
     {
-        [JsonNumberHandling (JsonNumberHandling.AllowReadingFromString)]
-        public int ENSD { get; set; } = 0;
+        public string ENSD { get; set; } = "";
         public string Size { get; set; } = "";
         public long Seed { get; set; } = 0L;
         public string Model { get; set; } = "";
