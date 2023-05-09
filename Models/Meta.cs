@@ -13,7 +13,7 @@ namespace CivitAI_Grabber.Models
         [JsonNumberHandling (JsonNumberHandling.AllowReadingFromString)]
         public int ENSD { get; set; } = 0;
         public string Size { get; set; } = "";
-        public ulong Seed { get; set; } = 0L;
+        public long Seed { get; set; } = 0L;
         public string Model { get; set; } = "";
         public int Steps { get; set; } = 0;
         public Dictionary<string, string> Hashes { get; set; } = new ();
