@@ -132,7 +132,13 @@ namespace CivitAI_Grabber
             infoBuilder.AppendLine ();
             infoBuilder.AppendLine ($"------PREVIEWS METADATA-----");
             foreach (var image in modelVersion.Images)
+            {
+                // Do this for now as system.text.json doesn't have a way to auto-default initialise values.
+                if (image.Meta == null)
+                    continue;
+
                 infoBuilder.AppendLine (image.Meta.ToString ());
+            }
             infoBuilder.AppendLine ($"----------------------------");
             infoBuilder.AppendLine ();
             infoBuilder.AppendLine ($"------ENTIRE LINK JSON------");
