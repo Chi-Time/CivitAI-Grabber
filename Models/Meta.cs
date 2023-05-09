@@ -11,7 +11,7 @@ namespace CivitAI_Grabber.Models
     public class Meta
     {
         [JsonNumberHandling (JsonNumberHandling.AllowReadingFromString)]
-        public uint ENSD { get; set; } = 0;
+        public int ENSD { get; set; } = 0;
         public string Size { get; set; } = "";
         public ulong Seed { get; set; } = 0L;
         public string Model { get; set; } = "";
