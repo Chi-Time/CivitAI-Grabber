@@ -12,7 +12,10 @@ namespace CivitAI_Grabber
     /// <summary>Utilities for performing web requests and formatting with the CivitAI API.</summary>
     public static class WebUtility
     {
-        private static readonly HttpClient _Client = new HttpClient ();
+        private static readonly HttpClient _Client = new ()
+        {
+            Timeout = Timeout.InfiniteTimeSpan
+        };
         private static readonly NLog.Logger _Logger = NLog.LogManager.GetCurrentClassLogger ();
 
         /// <summary>Download a file from the given url to the filePath provided.</summary>
@@ -25,6 +28,13 @@ namespace CivitAI_Grabber
             try
             {
                 using HttpResponseMessage response = GetRedirectResponse (new Uri (url));
+                if (response.IsSuccessStatusCode == false)
+                {
+                    _Logger.Warn ($"Request responded with non-success status code {response.StatusCode}");
+                    return false;
+                }
+
+                //TODO: Move to async to download file in chunks and avoid memory issues.
                 using Stream stream = response.Content.ReadAsStream ();
                 using FileStream fs = new (filePath, FileMode.OpenOrCreate);
                 stream.Seek (0, SeekOrigin.Begin);
@@ -49,6 +59,12 @@ namespace CivitAI_Grabber
             try
             {
                 using HttpResponseMessage response = await GetRedirectResponseAsync (new Uri (url));
+                if (response.IsSuccessStatusCode == false)
+                {
+                    _Logger.Warn ($"Request responded with non-success status code {response.StatusCode}");
+                    return "";
+                }
+
                 using Stream stream = await response.Content.ReadAsStreamAsync ();
                 using StreamReader streamReader = new (stream);
                 text = await streamReader.ReadToEndAsync ();
@@ -90,6 +106,12 @@ namespace CivitAI_Grabber
             try
             {
                 using HttpResponseMessage response = GetRedirectResponse (new Uri (url));
+                if (response.IsSuccessStatusCode == false)
+                {
+                    _Logger.Warn ($"Request responded with non-success status code {response.StatusCode}");
+                    return "";
+                }
+
                 using Stream stream = response.Content.ReadAsStream ();
                 using StreamReader streamReader = new (stream);
                 text = streamReader.ReadToEnd ();
@@ -162,7 +184,7 @@ namespace CivitAI_Grabber
             }
             catch (Exception e)
             {
-                _Logger.Warn (e, $"JSON string is invalid.");
+                _Logger.Warn ($"JSON string is invalid.");
                 return false;
             }
         }
