@@ -40,11 +40,19 @@ namespace CivitAI_Grabber
 
                 var json = WebUtility.GetJSON ("https://civitai.com/api/v1/models/" + modelId);
                 if (string.IsNullOrWhiteSpace (json))
-                    Terminate ();
+                {
+                    Console.WriteLine ($"Failed to retrieve JSON data from {link.Url}");
+                    _Results.Add ((DownloadResult.Failed, link.Url));
+                    continue;
+                }
 
                 var model = Model.Deserialise (json);
                 if (model == null)
-                    Terminate ();
+                {
+                    Console.WriteLine ($"Failed to deserialize JSON data from {link.Url}");
+                    _Results.Add ((DownloadResult.Failed, link.Url));
+                    continue;
+                }
 
                 model!.Description = WebUtility.RemoveHTML (model.Description);
 
