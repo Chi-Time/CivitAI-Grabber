@@ -54,8 +54,6 @@ namespace CivitAI_Grabber
                     continue;
                 }
 
-                model!.Description = WebUtility.RemoveHTML (model.Description);
-
                 Console.WriteLine ($"Downloading: {model.Name} - From Url: {link.Url}");
                 DownloadResult result = Downloader.DownloadModel (model, link, config);
                 _Results.Add ((result, link.Url));
@@ -63,19 +61,15 @@ namespace CivitAI_Grabber
                 switch (result)
                 {
                     case DownloadResult.Success:
-                        Console.WriteLine ("Model File Downloaded.");
-                        break;
+                        Console.WriteLine ($"{model.Name} Downloaded.\n");
+                        continue;
                     case DownloadResult.Failed:
-                        Console.WriteLine ("Model File Failed.");
-                        break;
+                        Console.WriteLine ($"{model.Name} Failed.");
+                        continue;
                     case DownloadResult.Exists:
-                        Console.WriteLine ("Model File Already Saved.");
-                        break;
-                    default:
-                        break;
+                        Console.WriteLine ($"{model.Name} Already Saved.");
+                        continue;
                 }
-
-                Console.WriteLine ($"{model.Name} Downloaded.\n");
             }
 
             WriteResults ();
