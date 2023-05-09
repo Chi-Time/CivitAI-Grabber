@@ -117,12 +117,12 @@ namespace CivitAI_Grabber
 
             message.Clear ();
             foreach (var success in sucesses)
-                message.Append ($"\tModel file: {success.Url} downloaded.");
+                message.AppendLine ($"\tModel file: {success.Url} downloaded.");
             _Logger.Info ("Successes:\n" + message.ToString ());
 
             message.Clear ();
             foreach (var exists in existers)
-                message.Append ($"\tModel file: {exists.Url} already exists.");
+                message.AppendLine ($"\tModel file: {exists.Url} already exists.");
             _Logger.Info ("Exists:\n" + message.ToString ());
         }
 
